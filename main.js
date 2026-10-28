@@ -1,16 +1,17 @@
 /*
- * 设备记录器 (device-tracker) v2
+ * 设备记录器 (device-tracker) v3
  *
  * 在笔记 frontmatter 里记录：
  *   - created_device  创建设备（文件首次在本机出现时记录一次，永不覆盖）
  *   - modified_device 最后编辑设备（本机真实编辑时更新）
  *
- * v2 核心改动（解决 Syncthing 多设备同步导致的设备名互相覆盖）：
+ * 核心改动（解决 Syncthing 多设备同步导致的设备名互相覆盖）：
  *
  * 1. 设备标识不再存 data.json（会随 .obsidian 被 Syncthing 同步覆盖），
  *    改存 localStorage（设备本地 WebView 存储，不随 Syncthing 同步）。
  *    - 桌面端：自动读系统 hostname（如 ThinkPad-JK），也可手动改
- *    - 移动端：拿不到 hostname，手动填一次
+ *    - 移动端：拿不到 hostname，自动生成唯一标识（设备型号 + 随机短码），
+ *      首次运行生成后存本地，每台设备互不覆盖，也可手动改
  *
  * 2. modified_device 改用 editor-change 事件（用户在本机编辑器真实输入才触发），
  *    替代 vault modify 事件。Syncthing 把别的设备的修改同步过来时，会触发
@@ -26,6 +27,44 @@ const { Plugin, PluginSettingTab, Setting, TFile, Platform } = require('obsidian
 
 const STORAGE_KEY = 'device-tracker:deviceName';
 const DEBOUNCE_MS = 1500; // 停止输入后多久才写 frontmatter
+
+// ---- 移动端自动生成设备标识 ----
+
+// 从 UA 解析设备型号：Android "Pixel 7"/"SM-G998B"，iOS "iPhone"
+function parseMobileModel(ua) {
+  if (!ua) return '';
+  const m = ua.match(/Android[\s\d.;]*;\s*([^;)]+)/);
+  if (m) {
+    return m[1].trim().split(/\s+Build[/\s]/)[0].trim();
+  }
+  const ios = ua.match(/\b(iPhone|iPad|iPod)\b/);
+  if (ios) return ios[1];
+  return '';
+}
+
+// 型号 -> 紧凑可读标识（"Pixel 7" -> "Pixel7"）
+function sanitizeModel(s) {
+  const v = (s || '').replace(/[^A-Za-z0-9\u4e00-\u9fa5_-]+/g, '').slice(0, 20);
+  return v || '移动设备';
+}
+
+// 短随机码（字母数字，len 位）
+function randomId(len) {
+  const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+  let out = '';
+  try {
+    if (globalThis.crypto && globalThis.crypto.getRandomValues) {
+      const arr = new Uint32Array(len);
+      globalThis.crypto.getRandomValues(arr);
+      for (let i = 0; i < len; i++) out += chars[arr[i] % chars.length];
+      return out;
+    }
+  } catch (e) {
+    // 回落 Math.random
+  }
+  for (let i = 0; i < len; i++) out += chars[Math.floor(Math.random() * chars.length)];
+  return out;
+}
 
 module.exports = class DeviceTrackerPlugin extends Plugin {
   async onload() {
@@ -66,6 +105,7 @@ module.exports = class DeviceTrackerPlugin extends Plugin {
       name = '';
     }
     if (name && name.trim()) return name.trim();
+
     // 桌面端：localStorage 为空时自动回落到系统 hostname
     if (Platform.isDesktop) {
       try {
@@ -73,8 +113,18 @@ module.exports = class DeviceTrackerPlugin extends Plugin {
       } catch (e) {
         name = '';
       }
+      return (name || '').trim();
     }
-    return (name || '').trim();
+
+    // 移动端：localStorage 为空时自动生成唯一标识（型号 + 短码），并立即存下
+    name = this.generateMobileName();
+    this.setDeviceName(name);
+    return name;
+  }
+
+  generateMobileName() {
+    const ua = typeof navigator !== 'undefined' ? navigator.userAgent : '';
+    return sanitizeModel(parseMobileModel(ua)) + '-' + randomId(6);
   }
 
   setDeviceName(name) {
