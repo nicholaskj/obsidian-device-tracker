@@ -1,9 +1,9 @@
 {
   "id": "device-tracker",
-  "name": "设备记录器",
-  "version": "3.0.0",
+  "name": "Device Tracker",
+  "version": "1.0.0",
   "minAppVersion": "1.4.0",
-  "description": "在笔记 frontmatter 记录创建设备(created_device)与最后编辑设备(modified_device)。设备标识：桌面端用主机名、移动端自动生成唯一标识(型号+随机码)，存本地 localStorage 不随 Syncthing 同步覆盖；最后编辑只记录本机真实输入，同步不触发。",
-  "author": "nicholas",
+  "description": "Records which device created and last edited each note in its frontmatter. Device names stay local, so sync tools never overwrite them, and synced-in edits don't count as local edits.",
+  "author": "JK",
   "isDesktopOnly": false
 }

@@ -222,22 +222,22 @@ class DeviceTrackerSettingTab extends PluginSettingTab {
 
     let nameInput;
     const setting = new Setting(containerEl)
-      .setName('本机设备名')
+      .setName('Device name')
       .setDesc(
-        '存在本机 localStorage，不随 Syncthing 同步（各设备独立）。' +
-          '桌面端留空则自动用系统主机名；移动端请手动填。',
+        'Stored in this device\'s localStorage, so sync tools do not share it. ' +
+          'Desktop falls back to the system hostname; on mobile, set it manually.',
       )
       .addText((text) => {
         nameInput = text;
         text
-          .setPlaceholder('例如 ThinkPad-JK / Nick手机')
+          .setPlaceholder('e.g. ThinkPad-JK or Pixel7-a3f9c2')
           .setValue(this.plugin.getDeviceName())
           .onChange((v) => this.plugin.setDeviceName(v));
       });
 
     if (Platform.isDesktop) {
       setting.addButton((btn) =>
-        btn.setButtonText('检测本机名').onClick(() => {
+        btn.setButtonText('Detect').onClick(() => {
           let name = '';
           try {
             name = require('os').hostname();
@@ -253,10 +253,12 @@ class DeviceTrackerSettingTab extends PluginSettingTab {
     }
 
     new Setting(containerEl)
-      .setName('说明')
+      .setName('How it works')
       .setDesc(
-        'created_device = 创建设备（只写一次）；modified_device = 最后编辑设备（本机真实编辑时更新，' +
-          'Syncthing 同步不会触发）。与 update-time-on-edit 等插件兼容，不死循环。',
+        'created_device is written once, the first time a note exists on a device. ' +
+          'modified_device updates only when you type on this device — edits arriving ' +
+          'through sync do not trigger it. Safe to run alongside plugins that also ' +
+          'write frontmatter.',
       );
   }
 }
