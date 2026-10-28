@@ -68,6 +68,25 @@ modified_device: Pixel7-a3f9c2
 | `created_device` | 创建设备 | 文件首次在某台设备出现时写一次，之后永不覆盖 |
 | `modified_device` | 最后编辑设备 | 本机真实打字时写，防抖 1.5 秒 |
 
+## 按设备名检索笔记
+
+字段写进笔记之后，用 [Dataview](https://github.com/blacksmithgu/obsidian-dataview)
+就能按它筛选 —— 「这台电脑上改过哪些」「哪些笔记在机器之间流转过」等等。
+
+```dataviewjs
+const me = app.plugins.plugins['device-tracker'].getDeviceName();
+
+dv.table(
+  ['笔记', '创建于', '最后编辑于'],
+  dv.pages('"学业"')
+    .where(p => p.modified_device === me)
+    .map(p => [p.file.link, p.created_device ?? '—', p.modified_device ?? '—'])
+);
+```
+
+五个完整例子（含防崩溃的设备名取法、纯 DQL 版本）在
+**[docs/queries.zh-CN.md](docs/queries.zh-CN.md)**（English：[docs/queries.md](docs/queries.md)）。
+
 ---
 
 ## 与其他 frontmatter 插件共存

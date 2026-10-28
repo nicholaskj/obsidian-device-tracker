@@ -77,6 +77,26 @@ You can override the name any time in
 | `created_device` | Device that created the note | First time the file exists on a device. Written once, never overwritten. |
 | `modified_device` | Device that last edited the note | When a human types locally. Debounced 1.5 s. |
 
+## Querying notes by device
+
+Once the fields are in your notes, [Dataview](https://github.com/blacksmithgu/obsidian-dataview)
+can filter on them — "show me everything I edited on this laptop", "which notes
+moved between machines?", and so on.
+
+```dataviewjs
+const me = app.plugins.plugins['device-tracker'].getDeviceName();
+
+dv.table(
+  ['Note', 'Created on', 'Last edited on'],
+  dv.pages('"Projects"')
+    .where(p => p.modified_device === me)
+    .map(p => [p.file.link, p.created_device ?? '—', p.modified_device ?? '—'])
+);
+```
+
+Five worked examples — including a crash-safe device-name helper and a plain
+DQL version — are in **[docs/queries.md](docs/queries.md)** (中文：[docs/queries.zh-CN.md](docs/queries.zh-CN.md)).
+
 ---
 
 ## Coexisting with other frontmatter plugins
