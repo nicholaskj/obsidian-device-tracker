@@ -156,6 +156,19 @@ Obsidian 会问「你是否信任这个仓库的作者？」——
 
 ---
 
+## 文档索引
+
+所有文档都有中英两版，**各自独立页面，不混排**：
+
+| 内容 | English | 中文 |
+|---|---|---|
+| 入门说明 | [README.md](README.md) | [README.zh-CN.md](README.zh-CN.md) |
+| 按设备名检索笔记（DataviewJS） | [docs/queries.md](docs/queries.md) | [docs/queries.zh-CN.md](docs/queries.zh-CN.md) |
+| 提交到官方插件目录 | [docs/submission.md](docs/submission.md) | [docs/submission.zh-CN.md](docs/submission.zh-CN.md) |
+| 更新日志 | [CHANGELOG.md](CHANGELOG.md) | [CHANGELOG.zh-CN.md](CHANGELOG.zh-CN.md) |
+
+---
+
 ## 许可
 
 [MIT](LICENSE)

@@ -4,6 +4,8 @@
 > 版本：1.0.0
 > Release：https://github.com/nicholaskj/obsidian-device-tracker/releases/tag/1.0.0
 
+> English: [submission.md](submission.md)
+
 ---
 
 ## 前置检查（全部完成）

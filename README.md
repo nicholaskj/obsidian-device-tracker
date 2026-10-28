@@ -173,6 +173,19 @@ AI write this?", use Authorship Tracker.
 
 ---
 
+## Documentation
+
+Everything is available in both English and Chinese, as separate pages (never mixed):
+
+| Topic | English | 中文 |
+|---|---|---|
+| Getting started | [README.md](README.md) | [README.zh-CN.md](README.zh-CN.md) |
+| Querying notes by device (DataviewJS) | [docs/queries.md](docs/queries.md) | [docs/queries.zh-CN.md](docs/queries.zh-CN.md) |
+| Submitting to the community directory | [docs/submission.md](docs/submission.md) | [docs/submission.zh-CN.md](docs/submission.zh-CN.md) |
+| Release history | [CHANGELOG.md](CHANGELOG.md) | [CHANGELOG.zh-CN.md](CHANGELOG.zh-CN.md) |
+
+---
+
 ## License
 
 [MIT](LICENSE)
