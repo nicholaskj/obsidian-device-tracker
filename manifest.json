@@ -1,0 +1,9 @@
+{
+  "id": "device-tracker",
+  "name": "设备记录器",
+  "version": "1.0.0",
+  "minAppVersion": "1.4.0",
+  "description": "在笔记 frontmatter 记录创建设备(created_device)与最后编辑设备(modified_device)。每台设备可自设设备名，与其他自动改 frontmatter 的插件和平共存。",
+  "author": "nicholas",
+  "isDesktopOnly": false
+}
